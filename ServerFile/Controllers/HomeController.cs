@@ -2,6 +2,9 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Net;
+using System.Net.Http;
+using System.Net.Http.Headers;
 using System.Net.Mail;
 using System.Web;
 using System.Web.Mvc;
@@ -13,8 +16,20 @@ namespace ServerFile.Controllers
     {
         public ActionResult Index()
         {
-            Attachment();
+            GenerateFile("3456");
+            Post("1", "2", "3");
             return View();
+        }
+        public HttpResponseMessage Post(string version, string environment,
+                string filetype)
+        {
+            var path = @"C:\Users\user\Documents\Zapis1111.txt";
+            HttpResponseMessage result = new HttpResponseMessage(HttpStatusCode.OK);
+            var stream = new FileStream(path, FileMode.Open);
+            result.Content = new StreamContent(stream);
+            result.Content.Headers.ContentType =
+                new MediaTypeHeaderValue("application/octet-stream");
+            return result;
         }
 
         protected void CsGenerClick(object sender,EventArgs e) { 
