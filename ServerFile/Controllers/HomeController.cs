@@ -2,9 +2,6 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Net;
-using System.Net.Http;
-using System.Net.Http.Headers;
 using System.Net.Mail;
 using System.Web;
 using System.Web.Mvc;
@@ -16,49 +13,24 @@ namespace ServerFile.Controllers
     {
         public ActionResult Index()
         {
-            GenerateFile("3456");
-            Post("1", "2", "3");
+            var path = GenerateFile("23");
+           // var ty = inputText.value;
+            ViewBag.Message = path;            
             return View();
         }
-        public HttpResponseMessage Post(string version, string environment,
-                string filetype)
+        public ActionResult Download(object sender, EventArgs e)
         {
-            var path = @"C:\Users\user\Documents\Zapis1111.txt";
-            HttpResponseMessage result = new HttpResponseMessage(HttpStatusCode.OK);
-            var stream = new FileStream(path, FileMode.Open);
-            result.Content = new StreamContent(stream);
-            result.Content.Headers.ContentType =
-                new MediaTypeHeaderValue("application/octet-stream");
-            return result;
+           // var ty = inputText.value;
+            var path = GenerateFile("23");
+            Response.ContentType = "application/octet-stream";
+            Response.AppendHeader("Content-Disposition", "attachment; filename="+ path);
+            Response.TransmitFile(Server.MapPath(path));
+            Response.End();
+
+            return null;
         }
 
-        protected void CsGenerClick(object sender,EventArgs e) { 
-        
-        string input = Request["inputText"];
-        GenerateFile(input);
-        }
-        public void Attachment()
-        {
-
-            MailMessage mail = new MailMessage();
-            mail.From = new MailAddress("toja@wp.pl");
-            mail.To.Add("t.antonik@sente.pl");
-
-            FileStream fileContent;
-            fileContent = GenerateFile("45");
-
-            mail.Attachments.Add(new Attachment(fileContent, "Zapis111.txt", "text/plain"));
-            try
-            {
-                SmtpClient clinet = new SmtpClient("localhost");
-                clinet.Send(mail);
-            }
-            catch(Exception e)
-            {
-                int i = 0; 
-            }
-        }
-        public FileStream GenerateFile(string inputParam)
+        public string GenerateFile(string inputParam)
         {
             int k = int.Parse(inputParam);
             using (BCRandomStream rndstream = new BCRandomStream(1000))
@@ -71,7 +43,7 @@ namespace ServerFile.Controllers
                         for (var i = 0; i < k; i++)
                             writeStream.WriteLine(rndstream.Read());
                     }
-                    return fileStream;
+                    return path;
                 }
             }
         }
