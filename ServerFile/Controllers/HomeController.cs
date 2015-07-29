@@ -1,4 +1,5 @@
-﻿using System;
+﻿using ServerFile.Models;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -16,28 +17,45 @@ namespace ServerFile.Controllers
             return View();
         }
 
-        //[HttpParamAction]
-        public ActionResult Download()
+        [HttpPost]
+        public ActionResult Download(ModelFile file)
         {
-            var path = GenerateFile("45");
-            ViewBag.Path = path;
-            return View("Download");
+            
+            GenerateFile(file.MaxValue,file.FileAmount);
+            var fileName = "GenerateFile.txt";
+
+            //file.Path = path;
+            
+            System.Web.HttpResponse response = System.Web.HttpContext.Current.Response;
+            response.ClearContent();
+            response.Clear();
+            response.ContentType = "text/plain";
+            response.AddHeader("Content-Disposition",
+                               "attachment; filename=" + fileName + ";");
+            response.TransmitFile(Server.MapPath("~/GenerateFile.txt"));
+            response.Flush();
+            response.End();
+
+            return null;
+
         }
 
-        public string GenerateFile(string inputParam)
+        public FileStream GenerateFile(string inputParam,string amount )
         {
-            int k = int.Parse(inputParam);
-            using (BCRandomStream rndstream = new BCRandomStream(1000))
+            int maxVal = int.Parse(inputParam);
+            int _amount = int.Parse(amount);
+
+            using (BCRandomStream rndstream = new BCRandomStream(maxVal))
             {
-                string path = @"C:\Users\user\Documents\Zapis1111.txt";
+                string path = Server.MapPath("~/GenerateFile.txt");
                 using (FileStream fileStream = new FileStream(path, FileMode.Create, FileAccess.ReadWrite))
                 {
                     using (StreamWriter writeStream = new StreamWriter(fileStream))
                     {
-                        for (var i = 0; i < k; i++)
+                        for (var i = 0; i < _amount; i++)
                             writeStream.WriteLine(rndstream.Read());
                     }
-                    return path;
+                    return fileStream;
 
 
                 }

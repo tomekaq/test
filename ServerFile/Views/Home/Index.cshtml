@@ -1,4 +1,6 @@
-﻿@{
+﻿@model ServerFile.Models.ModelFile
+
+@{
     ViewBag.Title = "Index";
        
 }
@@ -11,9 +13,21 @@
 
 <body>
     
-        <input type="text" name="input" id="inputText" value="" />
-        <input type="submit" name="Download" value="input" />
-      
+    <p>
+        @Html.ActionLink("Generete New", "Download")
+    </p>
+    <table>
+    <tr>
+        <th>
+            @Html.EditorFor(model => model.FileAmount)
+        </th>
+    </tr>
+        <th>
+            @Html.EditorFor(model => model.MaxValue)
+        </th>
+    
+    </table>
+
 </body>
 
 </html>
