@@ -13,21 +13,15 @@ namespace ServerFile.Controllers
     {
         public ActionResult Index()
         {
-            var path = GenerateFile("23");
-           // var ty = inputText.value;
-            ViewBag.Message = path;            
             return View();
         }
-        public ActionResult Download(object sender, EventArgs e)
-        {
-           // var ty = inputText.value;
-            var path = GenerateFile("23");
-            Response.ContentType = "application/octet-stream";
-            Response.AppendHeader("Content-Disposition", "attachment; filename="+ path);
-            Response.TransmitFile(Server.MapPath(path));
-            Response.End();
 
-            return null;
+        //[HttpParamAction]
+        public ActionResult Download()
+        {
+            var path = GenerateFile("45");
+            ViewBag.Path = path;
+            return View("Download");
         }
 
         public string GenerateFile(string inputParam)
@@ -44,6 +38,8 @@ namespace ServerFile.Controllers
                             writeStream.WriteLine(rndstream.Read());
                     }
                     return path;
+
+
                 }
             }
         }
